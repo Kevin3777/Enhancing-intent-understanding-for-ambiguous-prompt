@@ -6,7 +6,7 @@ Official repository for the paper:
 DOI: [10.1016/j.neucom.2025.130415](https://doi.org/10.1016/j.neucom.2025.130415)
 
 [![Paper](https://img.shields.io/badge/Paper-ScienceDirect-blue.svg)](https://doi.org/10.1016/j.neucom.2025.130415)
-[![Dataset](https://img.shields.io/badge/Dataset-Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/naseele/Image_prompt/tree/main)
+[![Dataset](https://img.shields.io/badge/Dataset-Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/Kevin3777/Enhancing_Intent_Understanding)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange.svg)](https://pytorch.org/)
 
