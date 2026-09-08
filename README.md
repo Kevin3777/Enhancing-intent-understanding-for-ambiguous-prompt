@@ -14,7 +14,7 @@ DOI: [10.1016/j.neucom.2025.130415](https://doi.org/10.1016/j.neucom.2025.130415
 
 ## 📌 Overview
 
-Text-to-Image (T2I) systems frequently encounter vague or polysemous natural language inputs (e.g., *"mouse"* could mean an animal or computer hardware; *"spring"* could mean a season or a water spring)[cite: 1, 2]. 
+Text-to-Image (T2I) systems frequently encounter vague or polysemous natural language inputs (e.g., *"mouse"* could mean an animal or computer hardware; *"spring"* could mean a season or a water spring). 
 
 <p align="center">
   <img src="assets/fig1_ambiguity_examples.png" width="90%" alt="Ambiguous Prompts Examples">
@@ -23,8 +23,8 @@ Text-to-Image (T2I) systems frequently encounter vague or polysemous natural lan
 </p>
 
 **Visual Co-Adaptation (VCA)** introduces a closed-loop human-in-the-loop framework combining:
-1. **High-level Interpreter (SESD)**: Multi-turn prompt disambiguation and context-aware retrieval[cite: 1, 2].
-2. **Low-level Controller (PPCO)**: Pixel Precision and Consistency Optimization using Proximal Policy Optimization (PPO) and dynamic Cross-Attention matrix editing[cite: 1, 2].
+1. **High-level Interpreter (SESD)**: Multi-turn prompt disambiguation and context-aware retrieval.
+2. **Low-level Controller (PPCO)**: Pixel Precision and Consistency Optimization using Proximal Policy Optimization (PPO) and dynamic Cross-Attention matrix editing.
 
 <p align="center">
   <img src="assets/fig2_framework_overview.png" width="95%" alt="VCA Framework Architecture">
@@ -38,11 +38,11 @@ Text-to-Image (T2I) systems frequently encounter vague or polysemous natural lan
 
 ### 1. Dual-Objective CLIP Reward Optimization (Section 3.2.1, Eq. 14)
 
-To balance visual continuity with respect to the historical prompt while remaining responsive to new user feedback, the reward function $\mathcal{R}(\Theta)$ is formulated as[cite: 1, 2]:
+To balance visual continuity with respect to the historical prompt while remaining responsive to new user feedback, the reward function $\mathcal{R}(\Theta)$ is formulated as:
 
 $$\mathcal{R}(\Theta) = \text{CLIP}(I_{\text{gen}}, P_{\text{prev}}) + \lambda \cdot \text{CLIP}(I_{\text{gen}}, P_{\text{new}})$$
 
-where $\lambda = 0.2$ serves as an empirically validated trade-off weight[cite: 1, 2].
+where $\lambda = 0.2$ serves as an empirically validated trade-off weight.
 
 ```python
 import torch
@@ -77,11 +77,11 @@ class CLIPRewardModel(nn.Module):
 
 ### 2. PPCO: PPO-based Attention Policy Update (Section 3.2.2, Eq. 20)
 
-The low-level controller optimizes attention editing policies across iterations using Proximal Policy Optimization (PPO)[cite: 1, 2]:
+The low-level controller optimizes attention editing policies across iterations using Proximal Policy Optimization (PPO):
 
 $$L^{\text{PPO}}(\theta) = \hat{\mathbb{E}}_t \left[ \min\left( \rho_t(\theta) \hat{A}_t, \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t \right) \right]$$
 
-where $\rho_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}$ and the advantage function is $\hat{A}_t = r_t + \gamma V(s_{t+1}) - V(s_t)$[cite: 1, 2].
+where $\rho_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}$ and the advantage function is $\hat{A}_t = r_t + \gamma V(s_{t+1}) - V(s_t)$.
 
 ```python
 import torch.nn as nn
@@ -120,18 +120,18 @@ class PPCOTrainer:
 
 ### 3. Dynamic Attention Control Strategies (Section 3.2.3, Eq. 21–30)
 
-During diffusion sampling, cross-attention maps $M_t$ are intercepted and dynamically manipulated via three specialized operations[cite: 1, 2]:
+During diffusion sampling, cross-attention maps $M_t$ are intercepted and dynamically manipulated via three specialized operations:
 
-- **Strategy A: Attention-Replace (Word Swap, Eq. 21)**[cite: 1, 2]  
-  Preserves structural composition when swapping base tokens by limiting injection up to step $\tau$[cite: 1, 2]:
+- **Strategy A: Attention-Replace (Word Swap, Eq. 21)**  
+  Preserves structural composition when swapping base tokens by limiting injection up to step $\tau$:
   $$\text{Edit}(M_t, M_t^*, t) := \begin{cases} M_t^* & \text{if } t < \tau \\ M_t & \text{otherwise} \end{cases}$$
 
-- **Strategy B: Attention-Refine (Adding Phrase, Eq. 23, 27)**[cite: 1, 2]  
-  Maintains layout while smoothly blending new tokens with existing tokens using alignment map $A(j)$ and adaptive mixing parameter $\beta_t$[cite: 1, 2]:
+- **Strategy B: Attention-Refine (Adding Phrase, Eq. 23, 27)**  
+  Maintains layout while smoothly blending new tokens with existing tokens using alignment map $A(j)$ and adaptive mixing parameter $\beta_t$:
   $$M_{\text{update}}(t) = \beta_t \cdot M_{\text{orig}}(t) + (1 - \beta_t) \cdot M_{\text{new}}(t)$$
 
-- **Strategy C: Attention-Reweight (Feature Scaling, Eq. 28)**[cite: 1, 2]  
-  Controls the visual prominence of a specified token $j^*$ using scale parameter $c \in [-2, 2]$[cite: 1, 2]:
+- **Strategy C: Attention-Reweight (Feature Scaling, Eq. 28)**  
+  Controls the visual prominence of a specified token $j^*$ using scale parameter $c \in [-2, 2]$:
   $$(\text{Edit}(M_t, M_{t+1}, t))_{i,j} := \begin{cases} c \cdot M_t(i,j) & \text{if } j = j^* \\ M_t(i,j) & \text{otherwise} \end{cases}$$
 
 ```python
@@ -200,10 +200,10 @@ class DynamicCrossAttentionController:
 
 ## 📦 Multi-Round Dialogue Dataset
 
-We contribute a fine-grained annotated multi-turn dialogue dataset consisting of 1,673 JSON records (~3,000 dialogue turns) covering 5 domains: Clothing, Natural scenes, Anime, Realism, and Others[cite: 1, 2].
+We contribute a fine-grained annotated multi-turn dialogue dataset consisting of 1,673 JSON records (~3,000 dialogue turns) covering 5 domains: Clothing, Natural scenes, Anime, Realism, and Others.
 
 The dataset is publicly hosted on Hugging Face:  
-🔗 [https://huggingface.co/datasets/Kevin3777/Enhancing_Intent_Understanding](https://huggingface.co/datasets/Kevin3777/Enhancing_Intent_Understanding)[cite: 1, 2]
+🔗 [https://huggingface.co/datasets/Kevin3777/Enhancing_Intent_Understanding](https://huggingface.co/datasets/Kevin3777/Enhancing_Intent_Understanding)
 
 ```json
 {
@@ -285,11 +285,11 @@ print(f"Alignment Reward R(Theta): {reward:.4f}")
 
 ## 📊 Experimental Results
 
-As reported in *Neurocomputing* 646 (2025)[cite: 1, 2]:
+As reported in *Neurocomputing* 646 (2025):
 
-- **Average Dialogue Rounds to Satisfaction**: Reduced from 6.9 (w/o RL) to 4.3 (with PPO)[cite: 1, 2].
-- **Mean CLIP Score**: Reaches 0.92, significantly outperforming standard diffusion baselines[cite: 1, 2].
-- **User Satisfaction Rating**: Increased to 4.73 / 5.0[cite: 1, 2].
+- **Average Dialogue Rounds to Satisfaction**: Reduced from 6.9 (w/o RL) to 4.3 (with PPO).
+- **Mean CLIP Score**: Reaches 0.92, significantly outperforming standard diffusion baselines.
+- **User Satisfaction Rating**: Increased to 4.73 / 5.0.
 
 <p align="center">
   <img src="assets/fig12_qualitative_comparison.png" width="95%" alt="Qualitative Comparison with SOTA">
@@ -301,7 +301,7 @@ As reported in *Neurocomputing* 646 (2025)[cite: 1, 2]:
 
 ## 📖 Citation
 
-If you find this work or dataset helpful in your research, please cite our paper[cite: 1, 2]:
+If you find this work or dataset helpful in your research, please cite our paper:
 
 ```bibtex
 @article{wang2025enhancing,
