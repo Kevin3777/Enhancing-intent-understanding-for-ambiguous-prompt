@@ -1,4 +1,3 @@
-```markdown
 # Visual Co-Adaptation (VCA) for Ambiguous Prompts
 
 Official repository for the paper:  
@@ -62,7 +61,6 @@ class CLIPRewardModel(nn.Module):
         r_prev = self.compute_similarity(img_gen, p_prev)
         r_new = self.compute_similarity(img_gen, p_new)
         return r_prev + self.lambda_tradeoff * r_new
-
 ```
 
 ### 2. PPCO: PPO-based Attention Policy Update (Section 3.2.2, Eq. 20)
@@ -106,31 +104,23 @@ class PPCOTrainer:
         total_loss.backward()
         self.optimizer.step()
         return total_loss.item()
-
 ```
 
 ### 3. Dynamic Attention Control Strategies (Section 3.2.3, Eq. 21–30)
 
 During diffusion sampling, cross-attention maps $M_t$ are intercepted and dynamically manipulated via three specialized operations:
 
-* **Strategy A: Attention-Replace (Word Swap, Eq. 21)**
-Preserves structural composition when swapping base tokens by limiting injection up to step $\tau$:
+- **Strategy A: Attention-Replace (Word Swap, Eq. 21)**  
+  Preserves structural composition when swapping base tokens by limiting injection up to step $\tau$:
+  $$\text{Edit}(M_t, M_t^*, t) := \begin{cases} M_t^* & \text{if } t < \tau \\ M_t & \text{otherwise} \end{cases}$$
 
-$$\text{Edit}(M_t, M_t^*, t) := \begin{cases} M_t^* & \text{if } t < \tau \\ M_t & \text{otherwise} \end{cases}$$
+- **Strategy B: Attention-Refine (Adding Phrase, Eq. 23, 27)**  
+  Maintains layout while smoothly blending new tokens with existing tokens using alignment map $A(j)$ and adaptive mixing parameter $\beta_t$:
+  $$M_{\text{update}}(t) = \beta_t \cdot M_{\text{orig}}(t) + (1 - \beta_t) \cdot M_{\text{new}}(t)$$
 
-
-* **Strategy B: Attention-Refine (Adding Phrase, Eq. 23, 27)**
-Maintains layout while smoothly blending new tokens with existing tokens using alignment map $A(j)$ and adaptive mixing parameter $\beta_t$:
-
-$$M_{\text{update}}(t) = \beta_t \cdot M_{\text{orig}}(t) + (1 - \beta_t) \cdot M_{\text{new}}(t)$$
-
-
-* **Strategy C: Attention-Reweight (Feature Scaling, Eq. 28)**
-Controls the visual prominence of a specified token $j^*$ using scale parameter $c \in [-2, 2]$:
-
-$$(\text{Edit}(M_t, M_{t+1}, t))_{i,j} := \begin{cases} c \cdot M_t(i,j) & \text{if } j = j^* \\ M_t(i,j) & \text{otherwise} \end{cases}$$
-
-
+- **Strategy C: Attention-Reweight (Feature Scaling, Eq. 28)**  
+  Controls the visual prominence of a specified token $j^*$ using scale parameter $c \in [-2, 2]$:
+  $$(\text{Edit}(M_t, M_{t+1}, t))_{i,j} := \begin{cases} c \cdot M_t(i,j) & \text{if } j = j^* \\ M_t(i,j) & \text{otherwise} \end{cases}$$
 
 ```python
 import torch
@@ -186,7 +176,6 @@ class DynamicCrossAttentionController:
                 attn[:, :, :, token_idx] = attn[:, :, :, token_idx] * scale_c
 
         return attn
-
 ```
 
 ---
@@ -195,8 +184,7 @@ class DynamicCrossAttentionController:
 
 We contribute a fine-grained annotated multi-turn dialogue dataset consisting of 1,673 JSON records (~3,000 dialogue turns) covering 5 domains: Clothing, Natural scenes, Anime, Realism, and Others.
 
-The dataset is publicly hosted on Hugging Face:
-
+The dataset is publicly hosted on Hugging Face:  
 🔗 [https://huggingface.co/datasets/naseele/Image_prompt/tree/main](https://huggingface.co/datasets/naseele/Image_prompt/tree/main)
 
 ```json
@@ -215,7 +203,6 @@ The dataset is publicly hosted on Hugging Face:
     }
   ]
 }
-
 ```
 
 ---
@@ -225,21 +212,18 @@ The dataset is publicly hosted on Hugging Face:
 ### 1. Installation
 
 ```bash
-git clone [https://github.com/your-username/Visual-Co-Adaptation.git](https://github.com/your-username/Visual-Co-Adaptation.git)
-cd Visual-Co-Adaptation
+git clone https://github.com/Kevin3777/Enhancing-intent-understanding-for-ambiguous-prompt.git
+cd Enhancing-intent-understanding-for-ambiguous-prompt
 pip install -r requirements.txt
-
 ```
 
 `requirements.txt`:
-
 ```text
 torch>=2.0.0
 transformers>=4.30.0
 diffusers>=0.20.0
 accelerate>=0.20.0
 pillow>=9.0.0
-
 ```
 
 ### 2. Run Interactive Co-Adaptation Pipeline
@@ -277,7 +261,6 @@ image_r2.save("round_2.png")
 # 4. Compute Reward (Eq. 14)
 reward = reward_evaluator(image_r2, prompt_round_1, prompt_round_2)
 print(f"Alignment Reward R(Theta): {reward:.4f}")
-
 ```
 
 ---
@@ -286,9 +269,9 @@ print(f"Alignment Reward R(Theta): {reward:.4f}")
 
 As reported in *Neurocomputing* 646 (2025):
 
-* **Average Dialogue Rounds to Satisfaction**: Reduced from 6.9 (w/o RL) to 4.3 (with PPO).
-* **Mean CLIP Score**: Reaches 0.92, significantly outperforming standard diffusion baselines.
-* **User Satisfaction Rating**: Increased to 4.73 / 5.0.
+- **Average Dialogue Rounds to Satisfaction**: Reduced from 6.9 (w/o RL) to 4.3 (with PPO).
+- **Mean CLIP Score**: Reaches 0.92, significantly outperforming standard diffusion baselines.
+- **User Satisfaction Rating**: Increased to 4.73 / 5.0.
 
 ---
 
@@ -307,9 +290,4 @@ If you find this work or dataset helpful in your research, please cite our paper
   publisher={Elsevier},
   doi={10.1016/j.neucom.2025.130415}
 }
-
-```
-
-```
-
 ```
