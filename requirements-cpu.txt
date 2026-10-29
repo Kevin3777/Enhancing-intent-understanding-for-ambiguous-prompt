@@ -1,0 +1,4 @@
+# Optional CPU-only PyTorch backend. Install this first, then requirements.txt.
+--index-url https://download.pytorch.org/whl/cpu
+torch==2.6.0
+torchvision==0.21.0
