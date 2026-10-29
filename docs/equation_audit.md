@@ -52,7 +52,7 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-CLIP\ Score=\mathbf f_I^\top\mathbf f_T=\cos(\theta)
+\text{CLIP Score}=\mathbf f_I^\top\mathbf f_T=\cos(\theta)
 $$
 
 含义与输入输出：单位范数图像和文本嵌入的原始余弦。
@@ -155,7 +155,7 @@ $$
 
 含义与输入输出：在同维D的各向同性、秩一条件下简化行列式。
 
-审查及必要implementation-assumption：需C=||u||^4/(sigma_x^2 sigma_y^2)，且C*rho^2<1；原文仅说C>0，未交代尺度/正定域。
+审查及必要implementation-assumption：需 $C=\lVert\mathbf u\rVert^4/(\sigma_x^2\sigma_y^2)$，且 $C\rho^2<1$；原文仅说 $C>0$，未交代尺度/正定域。
 
 实现/边界：`scoring/mi.py::rank_one_proxy`；测试：`test_mi.py::test_gaussian_domain`；原审计标签：PAPER_AMBIGUOUS。
 
@@ -169,7 +169,7 @@ $$
 
 含义与输入输出：条件假设下的高斯MI近似。
 
-审查及必要implementation-assumption：仅在C*rho^2<1有效；关于|rho|递增，关于负rho并非递增。单调性不能无条件推广为CLIP=MI。
+审查及必要implementation-assumption：仅在 $C\rho^2<1$ 有效；该式随 $\lvert\rho\rvert$ 增大而增大，并非随负 $\rho$ 的数值增大而增大。单调性不能无条件推广为CLIP=MI。
 
 实现/边界：`scoring/mi.py::rank_one_proxy`；测试：`test_mi.py::test_gaussian_domain`；原审计标签：PAPER_AMBIGUOUS。
 
@@ -267,7 +267,7 @@ $$
 
 含义与输入输出：按经验年龄衰减和绝对TD误差的优先采样。
 
-审查及必要implementation-assumption：训练实际使用q_i=exp(-lambda*age_i)*abs(TD_i)+eps，p_i=q_i/sum(q)，w_i=(N*p_i)^(-beta)。每个epoch刷新TD优先级，保存behavior old_logprob与版本。PDF未说明陈旧轨迹与PPO兼容；仅同版本rollout参与PPO重采样，历史pool只供诊断，标implementation-assumption。
+审查及必要implementation-assumption：训练实际使用 $q_i=e^{-\lambda_{age}\,age_i}\lvert\delta_i\rvert+\epsilon$、$p_i=q_i/\sum_jq_j$、$w_i=(Np_i)^{-\beta}$。其中 $age_i$ 对应论文写作 $t_i$ 的经验年龄；$\lambda_{age}$ 是年龄衰减率，区别于 Eq. 14 的奖励系数 $\lambda=0.2$。每个epoch刷新TD优先级，保存behavior old_logprob与版本。PDF未说明陈旧轨迹与PPO兼容；仅同版本rollout参与PPO重采样，历史pool只供诊断，标implementation-assumption。
 
 实现/边界：`rl/replay.py::DiagnosticReplay; rl/ppo.py::PPO.update`；测试：`test_replay.py`；原审计标签：PAPER_AMBIGUOUS。
 
@@ -290,7 +290,11 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-Edit(M_t,M_t^*,t):=\begin{cases}M_t^*,&t<\tau\\M_t,&otherwise\end{cases}
+\operatorname{Edit}(M_t,M_t^*,t):=
+\begin{cases}
+M_t^*, & t<\tau,\\
+M_t, & \text{otherwise}.
+\end{cases}
 $$
 
 含义与输入输出：阈值内替换注意力。
@@ -318,7 +322,11 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-(Edit(M_t,M_t^*,t))_{i,j}:=\begin{cases}(M_t^*)_{i,j},&A(j)=None\\(M_t)_{i,A(j)},&otherwise\end{cases}
+(\operatorname{Edit}(M_t,M_t^*,t))_{i,j}:=
+\begin{cases}
+(M_t^*)_{i,j}, & A(j)=\text{None},\\
+(M_t)_{i,A(j)}, & \text{otherwise}.
+\end{cases}
 $$
 
 含义与输入输出：新插入token用目标图，匹配token用来源图。
@@ -360,7 +368,9 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-attn\_base\_replace_{ijk}=attn\_base_{ijk}\cdot mapper_{kj}\quad\Longrightarrow\quad(attn\_base\_replace)_{permute(2,0,1,3)}
+\text{attn\_base\_replace}_{ijk}=\text{attn\_base}_{ijk}\cdot\text{mapper}_{kj}
+\quad\Longrightarrow\quad
+\text{attn\_base\_replace}_{\operatorname{permute}(2,0,1,3)}
 $$
 
 含义与输入输出：原文以三指标乘法后permute四个维度。
@@ -388,7 +398,12 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-(Edit(M_t,M_{t+1},t))_{i,j}:=\begin{cases}c M_t(i,j),&j=j^*\\M_t(i,j),&otherwise\end{cases},\quad c\in[-2,2]
+(\operatorname{Edit}(M_t,M_{t+1},t))_{i,j}:=
+\begin{cases}
+c M_t(i,j), & j=j^*,\\
+M_t(i,j), & \text{otherwise},
+\end{cases}
+\quad c\in[-2,2]
 $$
 
 含义与输入输出：指定token后softmax权重缩放。

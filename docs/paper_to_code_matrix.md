@@ -14,16 +14,16 @@
 |Eq.(8), p6|Schur补行列式。|`scoring/mi.py::gaussian_mi`|`test_mi.py::test_gaussian_domain`|PAPER_EXACT；要求Sigma_X可逆，联合协方差块尺寸相容|
 |Eq.(9), p6|各向同性假设。|`scoring/mi.py (theory only)`|`test_mi.py::test_gaussian_domain`|PAPER_AMBIGUOUS；不是CLIP预训练保证；本地不将该假设写成数据事实|
 |Eq.(10), p6|重复Eq5秩一近似。|`scoring/mi.py (theory only)`|`test_mi.py::test_gaussian_domain`|PAPER_AMBIGUOUS；u范数未指定，C与sigma/u尺度有关；维度和中心化问题同Eq5|
-|Eq.(11), p6|在同维D的各向同性、秩一条件下简化行列式。|`scoring/mi.py::rank_one_proxy`|`test_mi.py::test_gaussian_domain`|PAPER_AMBIGUOUS；需C=//u//^4/(sigma_x^2 sigma_y^2)，且C*rho^2<1；原文仅说C>0，未交代尺度/正定域|
-|Eq.(12), p7|条件假设下的高斯MI近似。|`scoring/mi.py::rank_one_proxy`|`test_mi.py::test_gaussian_domain`|PAPER_AMBIGUOUS；仅在C*rho^2<1有效；关于/rho/递增，关于负rho并非递增|
+|Eq.(11), p6|在同维D的各向同性、秩一条件下简化行列式。|`scoring/mi.py::rank_one_proxy`|`test_mi.py::test_gaussian_domain`|PAPER_AMBIGUOUS；需 $C=\lVert\mathbf u\rVert^4/(\sigma_x^2\sigma_y^2)$，且 $C\rho^2<1$；原文仅说 $C>0$，未交代尺度/正定域|
+|Eq.(12), p7|条件假设下的高斯MI近似。|`scoring/mi.py::rank_one_proxy`|`test_mi.py::test_gaussian_domain`|PAPER_AMBIGUOUS；仅在 $C\rho^2<1$ 有效；该式随 $\lvert\rho\rvert$ 增大而增大|
 |Eq.(13), p7|字面为条件MI的梯度下降。|`scoring/mi.py::update`|`test_mi.py::test_direction`|PAPER_AMBIGUOUS；PDF p7 Eq13减号与最大化叙述冲突|
 |Eq.(14), p7|同一生成图对历史/新提示的双重奖励。|`scoring/clip_reward.py::dual_reward`|`test_reward.py::test_weights`|PAPER_EXACT；历史权重1，新权重0.2；与强调新意图的直觉不同但不得静默交换|
 |Eq.(15), p7|控制器参数梯度上升。|`rl/ppo.py::PPO.update`|`test_ppo.py::test_updates_actor_critic`|PAPER_AMBIGUOUS；未解释离散动作、PIL图像和采样步骤的可微路径；本实现使用PPO score-function更新策略，不能称本式逐像素直接梯度精确复现|
 |Eq.(16), p7|图像迭代更新抽象算子。|`editing/pipeline_adapter.py::PairDiffusion.generate`|`scripts/test_attention_effect.py`|PAPER_AMBIGUOUS；Upd未定义，未给真实图像反演方法|
 |Eq.(17), p7|最大化折扣累积奖励。|`rl/state_action.py; runtime/pipeline.py`|`test_ppo.py; test_runtime.py`|PAPER_AMBIGUOUS；此段说r_i=CLIP(I_i,P_i)，与Eq14双奖励不完全相同|
-|Eq.(18), p7|一步TD误差。|`rl/rollout.py::td_targets`|`test_ppo.py::test_done_mask`|PAPER_EXACT；原式省略终止mask；实现r+gamma*(1-done)*Vnext-V，critic target detach；不默认GAE|
-|Eq.(19), p7|按经验年龄衰减和绝对TD误差的优先采样。|`rl/replay.py::DiagnosticReplay; rl/ppo.py::PPO.update`|`test_replay.py`|PAPER_AMBIGUOUS；训练实际使用q_i=exp(-lambda*age_i)*abs(TD_i)+eps，p_i=q_i/sum(q)，w_i=(N*p_i)^(-beta)|
-|Eq.(20), p7|clipped PPO surrogate；rho=pi_new/pi_old；A为一步TD。|`rl/ppo.py::PPO.update`|`test_ppo.py`|PAPER_EXACT；以old_logprob.detach、exp(new-old)、clipped surrogate、critic bootstrap、done mask、KL/entropy监测和optimizer.step实施|
+|Eq.(18), p7|一步TD误差。|`rl/rollout.py::td_targets`|`test_ppo.py::test_done_mask`|PAPER_EXACT；原式省略终止mask；实现 $r_t+\gamma(1-d_t)V(s_{t+1})-V(s_t)$，critic target detach；不默认GAE|
+|Eq.(19), p7|按经验年龄衰减和绝对TD误差的优先采样。|`rl/replay.py::DiagnosticReplay; rl/ppo.py::PPO.update`|`test_replay.py`|PAPER_AMBIGUOUS；实现优先值 $q_i=e^{-\lambda_{age}age_i}\lvert\delta_i\rvert+\epsilon$，归一化采样率 $p_i=q_i/\sum_jq_j$，重要性权重 $w_i=(Np_i)^{-\beta}$；论文以 $t_i$ 表示经验年龄。|
+|Eq.(20), p7|裁剪 PPO surrogate；$\rho_t=\pi_\theta(a_t\mid s_t)/\pi_{\mathrm{old}}(a_t\mid s_t)$，$\hat A_t$ 为一步 TD。|`rl/ppo.py::PPO.update`|`test_ppo.py`|PAPER_EXACT；以old_logprob.detach、exp(new-old)、clipped surrogate、critic bootstrap、done mask、KL/entropy监测和optimizer.step实施|
 |Eq.(21), p8|阈值内替换注意力。|`editing/controllers.py::AttentionController`|`test_attention.py; scripts/test_attention_effect.py`|PAPER_AMBIGUOUS；PDF p8称M*为更新/梯度细化图，同时要求保留整体结构；未唯一规定来源|
 |Eq.(22), p8|更新映射矩阵后乘cross-attention。|`editing/token_alignment.py::align`|`test_alignment.py::test_mapping_shape`|PAPER_AMBIGUOUS；M/mapper二义，DeltaM来源、矩阵维度和归一化缺失|
 |Eq.(23), p8|新插入token用目标图，匹配token用来源图。|`editing/controllers.py; editing/token_alignment.py`|`test_alignment.py; test_attention.py`|PAPER_AMBIGUOUS；A是离散token对应，如何梯度上升未定义|

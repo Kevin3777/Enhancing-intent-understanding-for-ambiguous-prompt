@@ -34,13 +34,13 @@ The equations below highlight the parts that determine the interaction and optim
 
 The paper gives an incremental history-conditioned dialogue (Eq. 1, p. 4), followed by a compact current-prompt/current-feedback recurrence (Eq. 2, p. 5):
 
-\[
+$$
 y_{t+1}=M(p_{refine}\parallel x\parallel y_0\parallel fb_0\parallel\cdots\parallel y_t\parallel fb_t),
 \qquad
 y_{t+1}=M(x\parallel y_t\parallel fb_t).
-\]
+$$
 
-Here, \(x\) is the original request, \(y_t\) is the current refined prompt, \(fb_t\) is user feedback, and \(M\) is the language model. SESD maintains the multi-turn state, detects when intent is still ambiguous, and can return a clarifying question instead of treating an incomplete interpretation as settled. The source provides an offline rule-backed path and configurable local/provider LLM interfaces. The paper’s exact system prompt, ambiguity thresholds, stopping rule, and original fine-tuned language-model weights are not available; those operational details are implementation assumptions.
+Here, $x$ is the original request, $y_t$ is the current refined prompt, $fb_t$ is user feedback, and $M$ is the language model. SESD maintains the multi-turn state, detects when intent is still ambiguous, and can return a clarifying question instead of treating an incomplete interpretation as settled. The source provides an offline rule-backed path and configurable local/provider LLM interfaces. The paper’s exact system prompt, ambiguity thresholds, stopping rule, and original fine-tuned language-model weights are not available; those operational details are implementation assumptions.
 
 **Context-Aware RAG (CA-RAG)** retrieves relevant knowledge using the current prompt, feedback, and semantic category, then supplies that evidence to refinement/disambiguation. See Algorithm 3 (p. 6). The included seed knowledge base is a small, auditable resource, not the paper’s full knowledge corpus. Real model runs can use CLIP text embeddings for retrieval; the lightweight offline path is provided for tests. Neither path is claimed to reproduce an unspecified original retrieval encoder or index.
 
@@ -50,12 +50,12 @@ Relevant code: [`sesd/dialogue.py`](src/vca/sesd/dialogue.py), [`sesd/disambigua
 
 The paper defines CLIP alignment as the cosine between image and text embeddings (Eq. 4, p. 5) and uses a two-prompt reward (Eq. 14, p. 7):
 
-\[
+$$
 s(I,p)=\mathbf f_I^\top\mathbf f_T,\qquad
-R_t=s(I_t,y_{t-1})+\lambda s(I_t,y_t),\quad \lambda=0.2.
-\]
+R_t=\operatorname{CLIP}(I_t,y_{t-1})+\lambda\operatorname{CLIP}(I_t,y_t),\quad \lambda=0.2.
+$$
 
-\(I_t\) is the generated image; \(y_{t-1}\) and \(y_t\) are the previous and revised prompts. The implementation reports the raw cosine terms and applies the paper’s stated previous/new weighting. It does not substitute a scaled CLIP logit or claim that a single cosine is a direct estimate of true mutual information.
+$I_t$ is the generated image; $y_{t-1}$ and $y_t$ are the previous and revised prompts. The implementation reports the raw cosine terms and applies the paper’s stated previous/new weighting. It does not substitute a scaled CLIP logit or claim that a single cosine is a direct estimate of true mutual information.
 
 The paper’s mutual-information discussion (Eqs. 3–13, pp. 5–7) relies on distributional assumptions, and its Eq. 13 update sign conflicts with the stated maximization direction. The project retains those equations in the audit but does not claim to optimize true conditional mutual information. CLIP reward is measured after generation; gradients do **not** pass through the discrete sampling/PIL generation path.
 
@@ -77,25 +77,25 @@ Code: [`editing/controllers.py`](src/vca/editing/controllers.py), [`editing/toke
 
 The paper defines one-step temporal-difference error (Eq. 18, p. 7):
 
-\[
+$$
 \delta_t=r_t+\gamma V(s_{t+1})-V(s_t),
-\]
+$$
 
-where \(s_t\) is the interaction state, \(r_t\) the reward, \(V\) the critic, and \(\gamma\) the discount. The implementation masks the bootstrap at terminal transitions. Its prioritized replay probability follows the paper’s age-decayed absolute TD error (Eq. 19, p. 7):
+where $s_t$ is the interaction state, $r_t$ the reward, $V$ the critic, and $\gamma$ the discount. The implementation masks the bootstrap at terminal transitions. The paper’s Eq. 19 (p. 7) gives raw priority proportional to the age-decayed absolute TD error, $p_i\propto e^{-\lambda t_i}|\delta_i|+\epsilon$. The implementation makes sampling normalization and importance weights explicit:
 
-\[
-q_i=e^{-\lambda_{age}\,age_i}|\delta_i|+\epsilon,\qquad
+$$
+q_i=e^{-\lambda_{age}\,age_i}\lvert\delta_i\rvert+\epsilon,\qquad
 p_i=\frac{q_i}{\sum_jq_j},\qquad
 w_i=(N p_i)^{-\beta}.
-\]
+$$
 
-Importance weights \(w_i\) are applied in the PPO loss. The clipped surrogate objective is Eq. 20 (p. 7):
+Here $age_i$ is the stored transition’s age (the paper denotes age by $t_i$), $\lambda_{age}$ is the replay age-decay coefficient, $\epsilon$ is the priority floor, $N$ is the eligible rollout size, and $\beta$ is the importance-weight exponent. The paper’s $\lambda=0.2$ in Eq. 14 is a separate reward coefficient. Importance weights $w_i$ are applied in the PPO loss. The clipped surrogate objective is Eq. 20 (p. 7):
 
-\[
-L^{clip}(\theta)=\mathbb E_t\left[\min\left(\rho_t\hat A_t,
-\operatorname{clip}(\rho_t,1-\epsilon_{clip},1+\epsilon_{clip})\hat A_t\right)\right],
-\qquad \rho_t=\frac{\pi_\theta(a_t|s_t)}{\pi_{old}(a_t|s_t)}.
-\]
+$$
+L^{\mathrm{clip}}(\theta)=\mathbb E_t\left[\min\left(\rho_t\hat A_t,
+\operatorname{clip}(\rho_t,1-\epsilon_{\mathrm{clip}},1+\epsilon_{\mathrm{clip}})\hat A_t\right)\right],
+\qquad \rho_t=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{\mathrm{old}}(a_t\mid s_t)}.
+$$
 
 The rollout stores old-policy log probabilities and policy versions. PPO updates use compatible on-policy behavior-policy data; older policy versions are diagnostic rather than silently treated as fresh PPO trajectories. The paper does not fully specify stale-trajectory correction or all replay details, so this restriction is an explicit implementation choice.
 
