@@ -1,0 +1,10 @@
+mode: paper_literal
+replace_source: paper_literal_target
+reward_variant: paper_literal
+mi_update_mode: paper_literal
+true_mi_estimation: false
+reweight_rule: multiply_after_softmax
+validate_nonnegative_and_row_sum: true
+invalid_attention_behavior: explicit_error
+mapper_training: NOT_REPRODUCED
+status: partial_literal_paths_only_not_full_paper_execution

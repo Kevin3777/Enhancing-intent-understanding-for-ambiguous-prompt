@@ -1,0 +1,15 @@
+seed: 20261027
+height: 256
+width: 256
+step_choices: [8, 12]
+initial_steps: 12
+max_rounds: 3
+clip_device: cpu
+llm_backend: deterministic_mock
+action_authority: user_semantic_type_policy_parameters
+reward_variant: paper_literal
+ppo_lr: 0.00005
+ppo_epochs: 4
+minibatch: 1
+backbone_frozen: true
+classification: partial_experiment_replication

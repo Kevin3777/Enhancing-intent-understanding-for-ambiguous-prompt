@@ -1,0 +1,49 @@
+# Python environments and caches
+.venv/
+venv/
+env/
+.env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local secrets and machine-only settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.*
+
+# Model weights and caches
+models/
+.cache/
+huggingface/
+transformers_cache/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.gguf
+
+# Generated runs, datasets, and temporary downloads
+outputs/
+work/
+data/downloads/
+data/catalog.jsonl
+data/catalog.manifest.json
+data/*.zip
+*.part
+*.tmp
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+.pytest_tmp/

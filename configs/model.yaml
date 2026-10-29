@@ -1,0 +1,28 @@
+model_id: stable-diffusion-v1-5/stable-diffusion-v1-5
+revision: 451f4fe16113bff5a5d2269ed5ad43b0592e9a14
+license: creativeml-openrail-m
+model_path: models/sd15
+clip_id: openai/clip-vit-base-patch32
+clip_revision: 3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268
+clip_path: models/clip
+clip_scale: raw_cosine
+backbone_frozen: true
+scheduler: DDIM
+torch: 2.6.0+cu124
+diffusers: 0.32.2
+transformers: 4.48.3
+classification: ENGINEERING_CHOICE
+paper_training_settings_not_executed:
+  backbone: Efficient U-Net
+  diffusion_adam_lr: 0.0001
+  diffusion_warmup: 10000
+  diffusion_noise_timesteps: 1000
+  gpu: 4x4090
+  days: 3
+  ppo_episodes: 12000
+  ppo_epochs: 4
+  ppo_batch: 256
+  ppo_lr: 0.00005
+  value_coefficient_reported: 2.2
+  kl_reward_coefficient_reported: 0.3
+  coefficient_loss_mapping: PAPER_AMBIGUOUS
