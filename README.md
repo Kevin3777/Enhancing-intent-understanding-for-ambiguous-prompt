@@ -52,7 +52,7 @@ The paper defines CLIP alignment as the cosine between image and text embeddings
 
 $$
 s(I,p)=\mathbf f_I^\top\mathbf f_T,\qquad
-R_t=\operatorname{CLIP}(I_t,y_{t-1})+\lambda\operatorname{CLIP}(I_t,y_t),\quad \lambda=0.2.
+R_t=\mathrm{CLIP}(I_t,y_{t-1})+\lambda\mathrm{CLIP}(I_t,y_t),\quad \lambda=0.2.
 $$
 
 $I_t$ is the generated image; $y_{t-1}$ and $y_t$ are the previous and revised prompts. The implementation reports the raw cosine terms and applies the paper’s stated previous/new weighting. It does not substitute a scaled CLIP logit or claim that a single cosine is a direct estimate of true mutual information.
@@ -93,7 +93,7 @@ Here $age_i$ is the stored transition’s age (the paper denotes age by $t_i$), 
 
 $$
 L^{\mathrm{clip}}(\theta)=\mathbb E_t\left[\min\left(\rho_t\hat A_t,
-\operatorname{clip}(\rho_t,1-\epsilon_{\mathrm{clip}},1+\epsilon_{\mathrm{clip}})\hat A_t\right)\right],
+\mathrm{clip}(\rho_t,1-\epsilon_{\mathrm{clip}},1+\epsilon_{\mathrm{clip}})\hat A_t\right)\right],
 \qquad \rho_t=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{\mathrm{old}}(a_t\mid s_t)}.
 $$
 

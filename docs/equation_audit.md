@@ -52,7 +52,7 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-\text{CLIP Score}=\mathbf f_I^\top\mathbf f_T=\cos(\theta)
+\mathrm{CLIP}\,\mathrm{Score}=\mathbf f_I^\top\mathbf f_T=\cos(\theta)
 $$
 
 含义与输入输出：单位范数图像和文本嵌入的原始余弦。
@@ -276,7 +276,7 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-\mathcal L^{PPO}(\theta)=\mathbb E_t[\min(\rho_t(\theta)\hat A_t,\operatorname{clip}(\rho_t(\theta),1-\epsilon,1+\epsilon)\hat A_t)]
+\mathcal L^{PPO}(\theta)=\mathbb E_t[\min(\rho_t(\theta)\hat A_t,\mathrm{clip}(\rho_t(\theta),1-\epsilon,1+\epsilon)\hat A_t)]
 $$
 
 含义与输入输出：clipped PPO surrogate；rho=pi_new/pi_old；A为一步TD。
@@ -290,10 +290,10 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-\operatorname{Edit}(M_t,M_t^*,t):=
+\mathrm{Edit}(M_t,M_t^*,t):=
 \begin{cases}
 M_t^*, & t<\tau,\\
-M_t, & \text{otherwise}.
+M_t, & \mathrm{otherwise}.
 \end{cases}
 $$
 
@@ -322,10 +322,10 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-(\operatorname{Edit}(M_t,M_t^*,t))_{i,j}:=
+(\mathrm{Edit}(M_t,M_t^*,t))_{i,j}:=
 \begin{cases}
-(M_t^*)_{i,j}, & A(j)=\text{None},\\
-(M_t)_{i,A(j)}, & \text{otherwise}.
+(M_t^*)_{i,j}, & A(j)=\mathrm{None},\\
+(M_t)_{i,A(j)}, & \mathrm{otherwise}.
 \end{cases}
 $$
 
@@ -368,9 +368,9 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-\text{attn\_base\_replace}_{ijk}=\text{attn\_base}_{ijk}\cdot\text{mapper}_{kj}
+\mathrm{attn\_base\_replace}_{ijk}=\mathrm{attn\_base}_{ijk}\cdot\mathrm{mapper}_{kj}
 \quad\Longrightarrow\quad
-\text{attn\_base\_replace}_{\operatorname{permute}(2,0,1,3)}
+\mathrm{attn\_base\_replace}_{\mathrm{permute}(2,0,1,3)}
 $$
 
 含义与输入输出：原文以三指标乘法后permute四个维度。
@@ -398,10 +398,10 @@ $$
 原式（paper-faithful 转写）：
 
 $$
-(\operatorname{Edit}(M_t,M_{t+1},t))_{i,j}:=
+(\mathrm{Edit}(M_t,M_{t+1},t))_{i,j}:=
 \begin{cases}
 c M_t(i,j), & j=j^*,\\
-M_t(i,j), & \text{otherwise},
+M_t(i,j), & \mathrm{otherwise},
 \end{cases}
 \quad c\in[-2,2]
 $$
